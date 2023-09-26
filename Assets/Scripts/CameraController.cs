@@ -33,6 +33,9 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate () 
     {
+        
+
+
         // Check if right mouse button is held down
         if (Input.GetMouseButton(1) && cameraFree)
         {
