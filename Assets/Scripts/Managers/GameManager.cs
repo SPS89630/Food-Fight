@@ -5,10 +5,11 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    public FruitScriptable fruits;
+    public FruitScriptable[] fruits;
     
     public int currentScore;
     public int currentWave;
+    public int enemiesKilled;
 
     [Header("UI")]
     public TextMeshProUGUI pointUI;
