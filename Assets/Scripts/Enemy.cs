@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     public int MaxHP = 100;
     public int CurrentHP = 100;
     public float speed = 10;
+    public FruitID currentFruit;
     public float throwDistance = 5.0f;
     void Start()
     {

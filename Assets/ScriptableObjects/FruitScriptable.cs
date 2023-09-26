@@ -6,6 +6,7 @@ using UnityEngine;
 public class FruitScriptable : ScriptableObject
 {
     public GameObject prefab;
+    public float throwingSpeed;
     public string name;
     public Effect[] effects;
 }

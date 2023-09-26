@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private Camera mainCamera;
 
+    public FruitID currentFruit;
+
     public static PlayerController Instance { get; private set; }
     private void Awake() 
     { 
