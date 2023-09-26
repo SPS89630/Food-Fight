@@ -1,10 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public FruitScriptable fruits;
+    
+    public int currentScore;
+    public int currentWave;
+
+    [Header("UI")]
+    public TextMeshProUGUI pointUI;
 
     public static GameManager Instance { get; private set; }
     private void Awake() 
@@ -29,6 +36,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        pointUI.text = string.Format("Score: {0}\nCurrent Wave: {1}", currentScore.ToString("D8"), currentWave.ToString("D2"));
     }
 }
