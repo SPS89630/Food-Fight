@@ -33,37 +33,6 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate () 
     {
-        
-
-
-        // Check if right mouse button is held down
-        if (Input.GetMouseButton(1) && cameraFree)
-        {
-            // Get the mouse movement axes
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
-
-            // Rotate the camera based on the mouse movement
-            xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -90.0f, 90.0f);
-            yRotation += mouseX;
-
-            Vector3 rotation = new Vector3(xRotation, yRotation, 0.0f);
-            transform.rotation = Quaternion.Euler(rotation);
-        }
-        else if(!cameraFree)
-        {
-            transform.LookAt(target);
-        }
-        else if(respawn)
-        {
-            Vector3 rotation = new Vector3(xRotation, yRotation, 0.0f);
-            transform.rotation = Quaternion.Euler(rotation);
-        }
-
-        Vector3 relTargetPos = new Vector3(target.position.x, target.position.y-1, target.position.z);
-
-        // Update the camera position and rotation
-        transform.position = relTargetPos - transform.forward * distance + Vector3.up * height;
+    
     }
 }
