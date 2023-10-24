@@ -6,7 +6,7 @@ using UnityEngine;
 public class FruitScriptable : ScriptableObject
 {
     public GameObject prefab;
-    public float throwingSpeed;
+    public float radius;
     public string name;
     public Effect[] effects;
 }
@@ -21,6 +21,7 @@ public enum EffectType
 {
     NONE = 0,
     DAMAGE = 1,
+    HEAL = 2,
 }
 
 [System.Serializable]

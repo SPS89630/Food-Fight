@@ -18,6 +18,11 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(CurrentHP <= 0)
+        {
+            Destroy(gameObject);
+        }
+
         //Move until a distance of 1 from the player
         if(Vector3.Distance(transform.position, PlayerController.Instance.transform.position) > throwDistance)
         {
@@ -26,7 +31,7 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            Debug.Log("Reached player!");
+            //Debug.Log("Reached player!");
         }
     }
 }

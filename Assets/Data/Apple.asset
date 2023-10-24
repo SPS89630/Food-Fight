@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Apple
   m_EditorClassIdentifier: 
   prefab: {fileID: 0}
+  radius: 0
   name: Appel
   effects:
-  - type: 0
-    argument: 0
-  - type: 0
-    argument: 0
+  - type: 1
+    argument: 20
+  - type: 1
+    argument: 20

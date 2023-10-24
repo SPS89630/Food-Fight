@@ -5,6 +5,7 @@ using DG.Tweening;
 
 public class MoveAction : MonoBehaviour
 {
+    public MeshRenderer renderer;
     public Vector3 teleportPosition; 
     // Start is called before the first frame update
     void Start()
@@ -16,11 +17,6 @@ public class MoveAction : MonoBehaviour
     void Update()
     {
         
-    }
-
-    void OnMouseOver()
-    {
-        //GLOW
     }
 
     void OnMouseDown()
