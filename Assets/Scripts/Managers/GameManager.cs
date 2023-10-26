@@ -36,12 +36,14 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator DisplayEffect(Vector3 position, string text, Color color)
     {
-        GameObject effect = Instantiate(effectDisplayPrefab, position, Quaternion.identity);
+        //randomize the y position
+        Vector3 randomPosition = new Vector3(position.x + Random.Range(-0.5f, 1.0f), position.y, position.z);
+        GameObject effect = Instantiate(effectDisplayPrefab, randomPosition, Quaternion.identity);
         effect.GetComponent<TextMeshPro>().text = text;
         effect.GetComponent<TextMeshPro>().color = color;
 
-        effect.transform.DOMoveY(effect.transform.position.y + 1.0f, 1.0f);
-        yield return new WaitForSeconds(1.0f);
+        effect.transform.DOMoveY(effect.transform.position.y + 1.0f, 0.5f);
+        yield return new WaitForSeconds(0.5f);
         Destroy(effect);
     }
     // Start is called before the first frame update
@@ -54,5 +56,17 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         //pointUI.text = string.Format("Score: {0}\nCurrent Wave: {1}", currentScore.ToString("D8"), currentWave.ToString("D2"));
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            SpawnFruit();
+        }
+    }
+
+    public void SpawnFruit()
+    {
+        int random = Random.Range(1, fruits.Length);
+        FruitScriptable data = fruits[random];
+        GameObject fruit = Instantiate(data.prefab, PlayerController.Instance.transform.position, Quaternion.identity);
+        fruit.GetComponent<Fruit>().ID = (FruitID)random;
     }
 }

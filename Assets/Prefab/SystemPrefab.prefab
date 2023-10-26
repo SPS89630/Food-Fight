@@ -177,8 +177,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fruits:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: b3570187374230040bd05c53a4f74d23, type: 2}
   - {fileID: 11400000, guid: ed5fd5f37da7b47339f2c8ef6ceb196b, type: 2}
+  - {fileID: 11400000, guid: 4ef14c7645e89ed4fb658b18f5daa685, type: 2}
   currentScore: 0
   currentWave: 0
   enemiesKilled: 0

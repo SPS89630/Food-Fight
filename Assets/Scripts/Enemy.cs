@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
     {
         if(CurrentHP <= 0)
         {
+            GameManager.Instance.enemiesKilled++;
             Destroy(gameObject);
         }
 

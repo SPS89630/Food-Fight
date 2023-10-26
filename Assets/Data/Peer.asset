@@ -10,13 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3a57721d9408455cad65426d21f7529, type: 3}
-  m_Name: Apple
+  m_Name: Peer
   m_EditorClassIdentifier: 
   prefab: {fileID: 3667745967364317285, guid: 0f99aa6975ad099469718d06c499861f, type: 3}
-  color: {r: 0.8490566, g: 0.18823424, b: 0.18823424, a: 1}
+  color: {r: 0.31038627, g: 0.8773585, b: 0.32817364, a: 1}
   radius: 1
-  mass: 1
-  name: Appel
+  mass: 10
+  name: 
   effects:
   - type: 1
-    argument: 20
+    argument: 1
+  - type: 1
+    argument: 1
+  - type: 1
+    argument: 1
+  - type: 1
+    argument: 1
+  - type: 1
+    argument: 1

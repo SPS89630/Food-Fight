@@ -6,18 +6,23 @@ using System.Linq;
 public class Fruit : MonoBehaviour
 {
     public FruitID ID;
-    MeshRenderer renderer;
     public bool isThrown = false;
+
+    MeshRenderer renderer;
+    Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
         renderer = GetComponent<MeshRenderer>();
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        rb.mass = GameManager.Instance.fruits[(int)ID].mass;
+        //change color
+        renderer.material.color = GameManager.Instance.fruits[(int)ID].color;
     }
 
     public IEnumerator OnCollisionEnter(Collision collision)

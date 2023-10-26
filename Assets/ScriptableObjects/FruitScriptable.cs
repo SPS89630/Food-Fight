@@ -6,7 +6,9 @@ using UnityEngine;
 public class FruitScriptable : ScriptableObject
 {
     public GameObject prefab;
+    public Color color;
     public float radius;
+    public float mass;
     public string name;
     public Effect[] effects;
 }
@@ -15,6 +17,7 @@ public enum FruitID
 {
     NONE = 0,
     APPLE = 1,
+    PEAR = 2,
 }
 
 public enum EffectType
