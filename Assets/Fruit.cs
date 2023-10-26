@@ -6,7 +6,7 @@ using System.Linq;
 public class Fruit : MonoBehaviour
 {
     public FruitID ID;
-    public bool isThrown = false;
+    public bool isHeld = false;
 
     MeshRenderer renderer;
     Rigidbody rb;
@@ -27,7 +27,7 @@ public class Fruit : MonoBehaviour
 
     public IEnumerator OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if(collision.gameObject.GetComponent<Entity>() != null && isHeld && collision.gameObject != PlayerController.Instance.gameObject)
         {
             //disable the renderer
             renderer.enabled = false;
@@ -43,10 +43,24 @@ public class Fruit : MonoBehaviour
             {
                 yield return StartCoroutine(Action(enemy));
             }
+            Destroy(gameObject);
         }
     }
 
-    public IEnumerator Action(Enemy enemy)
+    void OnPickUp()
+    {
+        PlayerController.Instance.currentFruit = ID;
+        isHeld = true;
+    }
+
+    void OnDrop()
+    {
+        PlayerController.Instance.currentFruit = FruitID.NONE;
+    }
+
+
+
+    public IEnumerator Action(Entity combatant)
     {
         FruitScriptable data = GameManager.Instance.fruits[(int)ID];
         Debug.Log("Running actions for " + data.name);
@@ -57,8 +71,8 @@ public class Fruit : MonoBehaviour
             {
                 case EffectType.DAMAGE:
                     Debug.Log("Dealing " + effect.argument + " damage");
-                    enemy.CurrentHP -= effect.argument;
-                    yield return StartCoroutine(GameManager.Instance.DisplayEffect(enemy.transform.position, effect.argument.ToString(), Color.white));
+                    combatant.CurrentHP -= effect.argument;
+                    yield return StartCoroutine(GameManager.Instance.DisplayEffect(combatant.transform.position, effect.argument.ToString(), Color.white));
                     break;
                 case EffectType.HEAL:
                     
