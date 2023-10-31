@@ -37,8 +37,8 @@ public class FoodStand : MonoBehaviour
     void SpawnFruit()
     {
         int fruitIndex = Random.Range(0, fruits.Length);
-        Vector3 pos = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y + 0.5f, spawnPoint.transform.position.z);
-        GameObject fruitObject = Instantiate(GameManager.Instance.fruits[fruitIndex].prefab, spawnPoint.transform.position, Quaternion.identity);
+        Vector3 pos = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y, spawnPoint.transform.position.z + (foodCount * 0.5f));
+        GameObject fruitObject = Instantiate(GameManager.Instance.fruits[fruitIndex].prefab, pos, Quaternion.identity);
 
         //GameObject fruit = Instantiate(fruits[fruitIndex].fruitPrefab, spawnPoint.transform.position, Quaternion.identity);
         fruitObject.GetComponent<Fruit>().ID = fruits[fruitIndex];

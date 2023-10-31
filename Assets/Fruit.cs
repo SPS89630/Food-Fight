@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -67,19 +68,42 @@ public class Fruit : MonoBehaviour
 
         foreach (var effect in data.effects)
         {
-            switch (effect.type)
+            if(!IsStructUninitialized(effect.effectData.damage))
             {
-                case EffectType.DAMAGE:
-                    Debug.Log("Dealing " + effect.argument + " damage");
-                    combatant.CurrentHP -= effect.argument;
-                    yield return StartCoroutine(GameManager.Instance.DisplayEffect(combatant.transform.position, effect.argument.ToString(), Color.white));
-                    break;
-                case EffectType.HEAL:
-                    
-                    break;
+                Debug.Log("Dealing " + effect.effectData.damage.damageAmount + " damage");
+                yield return StartCoroutine(DealDamage(effect.effectData.damage.damageAmount, combatant));
             }
+            
+            if(!IsStructUninitialized(effect.effectData.heal))
+            {
+                Debug.Log("Healing " + effect.effectData.heal.healAmount + " health");
+                combatant.CurrentHP += effect.effectData.heal.healAmount;
+            }
+
+            if(!IsStructUninitialized(effect.effectData.damageOverTime))
+            {
+                Debug.Log("Dealing " + effect.effectData.damageOverTime.damageAmount + " damage over " + effect.effectData.damageOverTime.duration + " seconds");
+                float time = 0;
+                while(time < effect.effectData.damageOverTime.duration)
+                {
+                    time += Time.deltaTime;
+                    yield return StartCoroutine(DealDamage(effect.effectData.damageOverTime.damageAmount, combatant, effect.effectData.damageOverTime.canKill));
+                    yield return new WaitForSeconds(effect.effectData.damageOverTime.coolDown);
+                }
+            }   
         }
 
         yield return null;
     }
+
+    IEnumerator DealDamage(int damage, Entity combatant, bool canKill = true)
+    {
+        combatant.CurrentHP = Mathf.Clamp(combatant.CurrentHP - damage, canKill ? 0 : 1 , combatant.MaxHP);
+        yield return StartCoroutine(GameManager.Instance.DisplayEffect(combatant.transform.position, damage.ToString(), Color.white));
+    }
+
+    public static bool IsStructUninitialized<T>(T myStruct) where T : struct
+{
+    return EqualityComparer<T>.Default.Equals(myStruct, default(T));
+}
 }
