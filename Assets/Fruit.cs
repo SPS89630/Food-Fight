@@ -89,6 +89,7 @@ public class Fruit : MonoBehaviour
                     time += Time.deltaTime;
                     yield return StartCoroutine(DealDamage(effect.effectData.damageOverTime.damageAmount, combatant, effect.effectData.damageOverTime.canKill));
                     yield return new WaitForSeconds(effect.effectData.damageOverTime.coolDown);
+                    time += effect.effectData.damageOverTime.coolDown;
                 }
             }   
         }
@@ -99,7 +100,7 @@ public class Fruit : MonoBehaviour
     IEnumerator DealDamage(int damage, Entity combatant, bool canKill = true)
     {
         combatant.CurrentHP = Mathf.Clamp(combatant.CurrentHP - damage, canKill ? 0 : 1 , combatant.MaxHP);
-        yield return StartCoroutine(GameManager.Instance.DisplayEffect(combatant.transform.position, damage.ToString(), Color.white));
+        yield return StartCoroutine(GameManager.Instance.DisplayEffect(combatant.transform.position, damage.ToString(), Color.white, combatant.transform));
     }
 
     public static bool IsStructUninitialized<T>(T myStruct) where T : struct

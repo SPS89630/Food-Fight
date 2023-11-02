@@ -13,7 +13,7 @@ public class FacePlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //not on y axis
-        gameObject.transform.LookAt(new Vector3(PlayerController.Instance.transform.position.x, gameObject.transform.position.y, PlayerController.Instance.transform.position.z));
+        //it's a plane so make sure it doesnt flip
+        gameObject.transform.LookAt(Camera.main.transform);
     }
 }

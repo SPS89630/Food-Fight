@@ -34,11 +34,11 @@ public class GameManager : MonoBehaviour
         } 
     }
 
-    public IEnumerator DisplayEffect(Vector3 position, string text, Color color)
+    public IEnumerator DisplayEffect(Vector3 position, string text, Color color, Transform parent = null)
     {
         //randomize the y position
         Vector3 randomPosition = new Vector3(position.x + Random.Range(-0.5f, 1.0f), position.y, position.z);
-        GameObject effect = Instantiate(effectDisplayPrefab, randomPosition, Quaternion.identity);
+        GameObject effect = Instantiate(effectDisplayPrefab, randomPosition, Quaternion.identity, parent);
         effect.GetComponent<TextMeshPro>().text = text;
         effect.GetComponent<TextMeshPro>().color = color;
 
