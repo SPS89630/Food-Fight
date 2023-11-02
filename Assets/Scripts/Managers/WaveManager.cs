@@ -25,7 +25,7 @@ public class WaveManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("SpawnWave", 0, 1f);
+        InvokeRepeating("SpawnWave", 0, 3f);
     }
 
     void SpawnWave()
@@ -36,7 +36,7 @@ public class WaveManager : MonoBehaviour
             //spawn enemy in a position around a circle
             Debug.Log("Spawned enemy!");
 
-            Vector3 position = Calculation.RandomPointOnCircle(new Vector3(0, 0.75f, 0f), 10.0f);
+            Vector3 position = Calculation.RandomPointOnCircle(new Vector3(0, 0.75f, 0f), 50.0f);
             int enemyIndex = Random.Range(0, waves[GameManager.Instance.currentWave].enemies.Count);
             EnemyID chosenEnemy = waves[GameManager.Instance.currentWave].enemies[enemyIndex];
             
@@ -62,6 +62,8 @@ public class WaveManager : MonoBehaviour
         float killBonus = GameManager.Instance.enemiesKilled + 1 * 0.1f;
 
         float totalBonus = timeBonus + waveBonus + scoreBonus + killBonus;
+
+        Debug.Log("Total bonus: " + totalBonus);
 
         return Mathf.RoundToInt(totalBonus * 100);    
     }

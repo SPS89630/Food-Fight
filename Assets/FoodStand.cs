@@ -5,6 +5,7 @@ using UnityEngine;
 public class FoodStand : MonoBehaviour
 {
     public FruitID[] fruits;
+    public List<Fruit> fruitList = new List<Fruit>();
     public int foodCount = 0;
     public GameObject spawnPoint;
 
@@ -42,6 +43,7 @@ public class FoodStand : MonoBehaviour
 
         //GameObject fruit = Instantiate(fruits[fruitIndex].fruitPrefab, spawnPoint.transform.position, Quaternion.identity);
         fruitObject.GetComponent<Fruit>().ID = fruits[fruitIndex];
+        fruitList.Add(fruitObject.GetComponent<Fruit>());
         foodCount++;
     }
 

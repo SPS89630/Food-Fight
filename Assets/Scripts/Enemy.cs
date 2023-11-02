@@ -7,11 +7,13 @@ public class Enemy : Entity
     // Start is called before the first frame update
     public EnemyID ID;
     public float speed = 10;
+
+    public GameObject target;
     
     public float throwDistance = 5.0f;
     void Start()
     {
-        currentFruit = FruitID.APPLE;
+        //currentFruit = FruitID.APPLE;
     }
 
     public void Initialize(EnemyID id)
@@ -46,16 +48,56 @@ public class Enemy : Entity
         switch (enemyAI)
         {
             case EnemyAIArguments.THROW:
-                //Move until a distance of 1 from the player
-                if(Vector3.Distance(transform.position, PlayerController.Instance.transform.position) > throwDistance)
+                if(currentFruit == FruitID.NONE)
                 {
-                    transform.LookAt(PlayerController.Instance.transform);
-                    transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, speed * Time.deltaTime);
+                    //Find a fruit stand
+                    GameObject fruitStand = FindFruitStand();
+
+                    if(fruitStand == null)
+                    {
+                        Debug.Log("No fruit stand found!");
+                        return;
+                    }
+                    else
+                    {
+                        //Move to the fruit stand
+                        if(Vector3.Distance(transform.position, fruitStand.transform.position) > 2)
+                        {
+                            transform.LookAt(fruitStand.transform);
+                            transform.position = Vector3.MoveTowards(transform.position, fruitStand.transform.position, speed * Time.deltaTime);
+                        }
+                        else
+                        {
+                            //Pick up a fruit
+                            int random = UnityEngine.Random.Range(0, fruitStand.GetComponent<FoodStand>().fruitList.Count);
+                            FoodStand fruitStandScript = fruitStand.GetComponent<FoodStand>();
+                            if(fruitStandScript.foodCount > 0)
+                            {
+                                fruitStandScript.foodCount--;
+                                currentFruit = fruitStandScript.fruitList[random].ID;
+                                fruitStandScript.fruitList.RemoveAt(random);
+                                Destroy(fruitStandScript.fruitList[random].gameObject);
+                            }
+                        }
+                    }
+                    
+
+                    return;
                 }
                 else
                 {
-                    //Debug.Log("Reached player!");
+                    //Move until a distance of 1 from the player
+                    if(Vector3.Distance(transform.position, PlayerController.Instance.transform.position) > throwDistance)
+                    {
+                        transform.LookAt(PlayerController.Instance.transform);
+                        transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, speed * Time.deltaTime);
+                    }
+                    else
+                    {
+                        //Debug.Log("Reached player!");
+                    }
                 }
+                
             break;
             case EnemyAIArguments.EXPLODE:
                 //Move until a distance of 1 from the player
@@ -70,5 +112,25 @@ public class Enemy : Entity
                 }
             break;
         }
+        
+    }
+
+    public GameObject FindFruitStand()
+    {
+        GameObject[] fruitStands = GameObject.FindGameObjectsWithTag("FoodStand");
+        GameObject closestFruitStand = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach(var fruitStand in fruitStands)
+        {
+            float distance = Vector3.Distance(transform.position, fruitStand.transform.position);
+            if(distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestFruitStand = fruitStand;
+            }
+        }
+
+        return closestFruitStand;
     }
 }
