@@ -5,14 +5,22 @@ using UnityEngine;
 public class Enemy : Entity
 {
     // Start is called before the first frame update
+    public EnemyID ID;
     public float speed = 10;
     
     public float throwDistance = 5.0f;
     void Start()
     {
-        MaxHP = 100;
-        CurrentHP = 100;
         currentFruit = FruitID.APPLE;
+    }
+
+    public void Initialize(EnemyID id)
+    {
+        ID = id;
+        CurrentHP = GameManager.Instance.enemies[(int)ID].health;
+        MaxHP = GameManager.Instance.enemies[(int)ID].health;
+        speed = GameManager.Instance.enemies[(int)ID].speed;
+        throwDistance = GameManager.Instance.enemies[(int)ID].throwDistance;
     }
 
     // Update is called once per frame
@@ -23,16 +31,44 @@ public class Enemy : Entity
             GameManager.Instance.enemiesKilled++;
             Destroy(gameObject);
         }
-
-        //Move until a distance of 1 from the player
-        if(Vector3.Distance(transform.position, PlayerController.Instance.transform.position) > throwDistance)
+        
+        if(ID != EnemyID.NONE)
         {
-            transform.LookAt(PlayerController.Instance.transform);
-            transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, speed * Time.deltaTime);
+            foreach(var ai in GameManager.Instance.enemies[(int)ID].ai)
+            {
+                ProcessAI(ai);
+            }
         }
-        else
+    }
+
+    void ProcessAI(EnemyAIArguments enemyAI)
+    {
+        switch (enemyAI)
         {
-            //Debug.Log("Reached player!");
+            case EnemyAIArguments.THROW:
+                //Move until a distance of 1 from the player
+                if(Vector3.Distance(transform.position, PlayerController.Instance.transform.position) > throwDistance)
+                {
+                    transform.LookAt(PlayerController.Instance.transform);
+                    transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, speed * Time.deltaTime);
+                }
+                else
+                {
+                    //Debug.Log("Reached player!");
+                }
+            break;
+            case EnemyAIArguments.EXPLODE:
+                //Move until a distance of 1 from the player
+                if(Vector3.Distance(transform.position, PlayerController.Instance.transform.position) > 1)
+                {
+                    transform.LookAt(PlayerController.Instance.transform);
+                    transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, speed * Time.deltaTime);
+                }
+                else
+                {
+                    //explode!!!
+                }
+            break;
         }
     }
 }

@@ -7,6 +7,7 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    public EnemyScriptable[] enemies;
     public FruitScriptable[] fruits;
     
     [Header("Statistics")]
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         Destroy(effect);
     }
+
     // Start is called before the first frame update
     void Start()
     {
