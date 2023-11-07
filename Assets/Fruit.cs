@@ -8,6 +8,9 @@ public class Fruit : MonoBehaviour
 {
     public FruitID ID;
     public bool isHeld = false;
+    public bool isEnemyTeam = false;
+
+    public CameraShake cameraShake;
 
     MeshRenderer renderer;
     Rigidbody rb;
@@ -16,6 +19,7 @@ public class Fruit : MonoBehaviour
     {
         renderer = GetComponent<MeshRenderer>();
         rb = GetComponent<Rigidbody>();
+        cameraShake = PlayerController.Instance.GetComponent<CameraShake>();
     }
 
     // Update is called once per frame
@@ -28,22 +32,32 @@ public class Fruit : MonoBehaviour
 
     public IEnumerator OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.GetComponent<Entity>() != null && isHeld && collision.gameObject != PlayerController.Instance.gameObject)
+        if (collision.gameObject.GetComponent<Entity>() != null && isHeld && collision.gameObject)
         {
-            //disable the renderer
+            // disable the renderer
             renderer.enabled = false;
 
-            //create a sphere at the point of collision
+            // create a sphere at the point of collision
             Collider[] hitColliders = Physics.OverlapSphere(collision.contacts[0].point, GameManager.Instance.fruits[(int)ID].radius);
 
-            //use LINQ get all enemies in the radius
+            // use LINQ to get all enemies in the radius
             var enemies = hitColliders.Where(x => x.GetComponent<Enemy>() != null).Select(x => x.GetComponent<Enemy>()).ToList();
 
-            //run actions on all enemies in the radius
-            foreach (var enemy in enemies)
+            if (isEnemyTeam)
             {
-                yield return StartCoroutine(Action(enemy));
+                // Check if the fruit belongs to the enemy team and run action on the player
+                var playerEntity = PlayerController.Instance.GetComponent<Entity>();
+                yield return StartCoroutine(Action(playerEntity));
             }
+            else
+            {
+                // Run actions on all enemies in the radius
+                foreach (var enemy in enemies)
+                {
+                    yield return StartCoroutine(Action(enemy));
+                }
+            }
+
             Destroy(gameObject);
         }
     }
@@ -71,7 +85,7 @@ public class Fruit : MonoBehaviour
             if(!IsStructUninitialized(effect.effectData.damage))
             {
                 Debug.Log("Dealing " + effect.effectData.damage.damageAmount + " damage");
-                yield return StartCoroutine(DealDamage(effect.effectData.damage.damageAmount, combatant));
+                yield return StartCoroutine(DealDamage(effect.effectData.damage.damageAmount, combatant, true));
             }
             
             if(!IsStructUninitialized(effect.effectData.heal))
@@ -97,14 +111,36 @@ public class Fruit : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator DealDamage(int damage, Entity combatant, bool canKill = true)
+    IEnumerator DealDamage(int damage, Entity combatant, bool canKill = true, bool doShake = false)
     {
         combatant.CurrentHP = Mathf.Clamp(combatant.CurrentHP - damage, canKill ? 0 : 1 , combatant.MaxHP);
-        yield return StartCoroutine(GameManager.Instance.DisplayEffect(combatant.transform.position, damage.ToString(), Color.white, combatant.transform));
+        if(combatant is PlayerController && doShake)
+        {
+            float shakeIntensity = ScaleFloat(Mathf.Clamp((float)damage / (float)combatant.MaxHP, 0.01f, 1f));
+            yield return StartCoroutine(cameraShake.DoShake(shakeIntensity));
+        }
+        else
+        {
+            yield return StartCoroutine(GameManager.Instance.DisplayEffect(combatant.transform.position, damage.ToString(), Color.white, combatant.transform));
+        }
     }
 
     public static bool IsStructUninitialized<T>(T myStruct) where T : struct
-{
-    return EqualityComparer<T>.Default.Equals(myStruct, default(T));
-}
+    {
+        return EqualityComparer<T>.Default.Equals(myStruct, default(T));
+    }
+
+    static float ScaleFloat(float input)
+    {
+        if (input >= 0.0f && input <= 1.0f)
+        {
+            // Scale the input value to the desired range [0.01, 0.2]
+            float scaledValue = input * 0.19f + 0.01f;
+            return scaledValue;
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException("Input value must be between 0 and 1");
+        }
+    }
 }

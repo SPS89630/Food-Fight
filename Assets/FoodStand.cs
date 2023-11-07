@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class FoodStand : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class FoodStand : MonoBehaviour
     public GameObject spawnPoint;
 
     public int currentSpawnDelay = SecondsToFrames(5);
-    int spawnDelay = 5;
+    public int spawnDelay = 5;
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +46,23 @@ public class FoodStand : MonoBehaviour
         fruitObject.GetComponent<Fruit>().ID = fruits[fruitIndex];
         fruitList.Add(fruitObject.GetComponent<Fruit>());
         foodCount++;
+    }
+
+    public FruitID TakeRandomFruit()
+    {
+        if(fruitList.Count > 0)
+        {
+            //destroy the object too
+            int random = UnityEngine.Random.Range(0, fruitList.Count);
+            FruitID id = fruitList[random].ID;
+            Destroy(fruitList[random].gameObject);
+            fruitList.RemoveAt(random);
+            foodCount--;
+
+            return id;
+        }
+
+        return FruitID.NONE;
     }
 
     static int SecondsToFrames(int seconds)

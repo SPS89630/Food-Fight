@@ -7,6 +7,7 @@ public class Enemy : Entity
     // Start is called before the first frame update
     public EnemyID ID;
     public float speed = 10;
+    public float throwAccuracy = 70.0f;
 
     public GameObject target;
     
@@ -61,23 +62,12 @@ public class Enemy : Entity
                     else
                     {
                         //Move to the fruit stand
-                        if(Vector3.Distance(transform.position, fruitStand.transform.position) > 2)
-                        {
-                            transform.LookAt(fruitStand.transform);
-                            transform.position = Vector3.MoveTowards(transform.position, fruitStand.transform.position, speed * Time.deltaTime);
-                        }
-                        else
+                        if(!MoveTowardsTarget(fruitStand.transform.position, 5))
                         {
                             //Pick up a fruit
                             int random = UnityEngine.Random.Range(0, fruitStand.GetComponent<FoodStand>().fruitList.Count);
                             FoodStand fruitStandScript = fruitStand.GetComponent<FoodStand>();
-                            if(fruitStandScript.foodCount > 0)
-                            {
-                                fruitStandScript.foodCount--;
-                                currentFruit = fruitStandScript.fruitList[random].ID;
-                                fruitStandScript.fruitList.RemoveAt(random);
-                                Destroy(fruitStandScript.fruitList[random].gameObject);
-                            }
+                            currentFruit = fruitStandScript.TakeRandomFruit();
                         }
                     }
                     
@@ -87,14 +77,28 @@ public class Enemy : Entity
                 else
                 {
                     //Move until a distance of 1 from the player
-                    if(Vector3.Distance(transform.position, PlayerController.Instance.transform.position) > throwDistance)
+                    if(!MoveTowardsTarget(PlayerController.Instance.transform.position, throwDistance))
                     {
-                        transform.LookAt(PlayerController.Instance.transform);
-                        transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, speed * Time.deltaTime);
-                    }
-                    else
-                    {
-                        //Debug.Log("Reached player!");
+                        //Throw the fruit
+                        // Calculate the direction to the player
+                        Vector3 playerPosition = PlayerController.Instance.transform.position;
+                        Vector3 enemyPosition = transform.position;
+                        Vector3 throwDirection = (playerPosition - enemyPosition).normalized;
+
+                        // Calculate the initial velocity to achieve the desired throw distance
+                        float gravity = 9.81f; // Acceleration due to gravity (adjust as needed)
+                        float timeToTarget = Mathf.Sqrt((2 * throwDistance) / gravity);
+                        Vector3 initialVelocity = (throwDirection * throwDistance) / timeToTarget;
+
+                        // Create and throw the fruit
+                        GameObject fruit = Instantiate(GameManager.Instance.fruits[(int)currentFruit].prefab, transform.position, Quaternion.identity);
+                        fruit.GetComponent<Fruit>().isEnemyTeam = true;
+                        fruit.GetComponent<Fruit>().ID = currentFruit;
+                        fruit.GetComponent<Fruit>().isHeld = true;
+                        Rigidbody fruitRigidbody = fruit.GetComponent<Rigidbody>();
+                        fruitRigidbody.velocity = initialVelocity;
+
+                        currentFruit = FruitID.NONE;
                     }
                 }
                 
@@ -132,5 +136,20 @@ public class Enemy : Entity
         }
 
         return closestFruitStand;
+    }
+
+    bool MoveTowardsTarget(Vector3 targetPosition, float distance)
+    {
+        if (Vector3.Distance(transform.position, targetPosition) > distance)
+        {
+            transform.LookAt(targetPosition);
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

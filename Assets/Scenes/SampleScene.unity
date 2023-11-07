@@ -659,6 +659,20 @@ MonoBehaviour:
   MaxHP: 0
   CurrentHP: 0
   currentFruit: 0
+--- !u!114 &1533204455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1533204451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d18651d4c5a08dd48850a7ad7a6de11a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeDuration: 0.5
+  shakeIntensity: 0.2
 --- !u!1 &1599203086
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,6 +800,7 @@ MonoBehaviour:
   foodCount: 0
   spawnPoint: {fileID: 4705034648435594442}
   currentSpawnDelay: 60
+  spawnDelay: 120
 --- !u!1 &1713536856
 GameObject:
   m_ObjectHideFlags: 0
