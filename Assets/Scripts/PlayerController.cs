@@ -6,7 +6,7 @@ public class PlayerController : Entity
 {
     private Animator animator;
     private Camera mainCamera;
-    private Healthbar healthbar;
+
     public static PlayerController Instance { get; private set; }
     private void Awake() 
     { 
@@ -26,17 +26,6 @@ public class PlayerController : Entity
     {
         animator = GetComponent<Animator>();
         mainCamera = Camera.main;
-        healthbar.SetMaxHealth(maxHealth);
-    }
-
-    void TakeDamage(int damage)
-    {
-        currentHealth -= damage;
-        healthbar.SetHealth(currentHealth);
-        // if(currentHealth <= 0)
-        //{
-        //    Die();
-        //}
     }
 }
 
