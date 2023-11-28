@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using DG.Tweening;
 
 public class CameraShake : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class CameraShake : MonoBehaviour
     private Vector3 originalPosition;
 
     private RectTransform rectTransform;
+
+    bool isShaking = false;
 
     public static CameraShake Instance { get; private set; }
     private void Awake() 
@@ -33,18 +36,15 @@ public class CameraShake : MonoBehaviour
         originalPosition = transform.localPosition;
     }
 
-    public IEnumerator DoShake(float intensity)
+    public IEnumerator DoShake()
     {
-        float elapsedTime = 0f;
-        shakeIntensity = intensity;
-
-        while (elapsedTime < shakeDuration)
+        if(!isShaking)
         {
-            Vector3 randomOffset = Random.insideUnitSphere * shakeIntensity;
-            rectTransform.localPosition = originalPosition + randomOffset;
-            elapsedTime += Time.deltaTime;
-
-            yield return null;
+            isShaking = true;
+            rectTransform.DOPunchAnchorPos(new Vector2(shakeIntensity,shakeIntensity), shakeIntensity, 90, 80, false);
+            yield return new WaitForSeconds(shakeDuration);
+            isShaking = false;
         }
+        yield return null;
     }
 }

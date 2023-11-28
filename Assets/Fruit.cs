@@ -113,8 +113,7 @@ public class Fruit : MonoBehaviour
         combatant.CurrentHP = Mathf.Clamp(combatant.CurrentHP - damage, canKill ? 0 : 1 , combatant.MaxHP);
         if(combatant is PlayerController && doShake)
         {
-            float shakeIntensity = ScaleFloat(Mathf.Clamp((float)damage / (float)combatant.MaxHP, 0.01f, 1f));
-            yield return StartCoroutine(CameraShake.Instance.DoShake(shakeIntensity));
+            yield return StartCoroutine(CameraShake.Instance.DoShake());
         }
         else
         {

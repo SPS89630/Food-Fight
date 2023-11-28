@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class WaveManager : MonoBehaviour
 {
     public List<Wave> waves;
     float elaspedTime;
+    public TimeSpan waveTime = new TimeSpan();
     float maxTime = Calculation.SecondsToFrames(60);
+    bool firstSpawn = false;
     public static WaveManager Instance { get; private set; }
     private void Awake() 
     { 
@@ -31,13 +34,15 @@ public class WaveManager : MonoBehaviour
     void SpawnWave()
     {
         //spawn enemies
-        if(Calculation.Chance(GetSpawnChance(GameManager.Instance.currentWave)))
+        if(Calculation.Chance(GetSpawnChance(GameManager.Instance.currentWave)) || firstSpawn)
         {
             //spawn enemy in a position around a circle
             Debug.Log("Spawned enemy!");
 
+            firstSpawn = false;
+
             Vector3 position = Calculation.RandomPointOnCircle(new Vector3(0, 0.75f, 0f), 50.0f);
-            int enemyIndex = Random.Range(0, waves[GameManager.Instance.currentWave].enemies.Count);
+            int enemyIndex = UnityEngine.Random.Range(0, waves[GameManager.Instance.currentWave].enemies.Count);
             EnemyID chosenEnemy = waves[GameManager.Instance.currentWave].enemies[enemyIndex];
             
             GameObject enemy = Instantiate(GameManager.Instance.enemies[(int)chosenEnemy].prefab, position, Quaternion.identity);
@@ -65,13 +70,14 @@ public class WaveManager : MonoBehaviour
 
         Debug.Log("Total bonus: " + totalBonus);
 
-        return Mathf.RoundToInt(totalBonus * 100);    
+        return Mathf.RoundToInt(totalBonus * 10);    
     }
 
     // Update is called once per frame
     void Update()
     {
         elaspedTime += Time.deltaTime;
+        waveTime = waveTime.Add(TimeSpan.FromSeconds(Time.deltaTime));
     }
 
     [System.Serializable]
