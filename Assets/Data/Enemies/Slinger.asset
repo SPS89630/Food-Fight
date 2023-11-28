@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Slinger
   m_EditorClassIdentifier: 
   name: Slinger
-  id: 0
+  id: 1
   prefab: {fileID: 6203702882066681147, guid: 4dd7b0e94d84a9448b00ceea98e11920, type: 3}
   health: 100
   speed: 6.5

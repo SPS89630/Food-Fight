@@ -9,8 +9,27 @@ public class CameraShake : MonoBehaviour
 
     private Vector3 originalPosition;
 
+    private RectTransform rectTransform;
+
+    public static CameraShake Instance { get; private set; }
+    private void Awake() 
+    { 
+        // If there is an instance, and it's not me, delete myself.
+        
+        if (Instance != null && Instance != this) 
+        { 
+            Destroy(this); 
+        } 
+        else 
+        { 
+            Instance = this; 
+        } 
+    }
+
     private void Start()
     {
+        rectTransform = GetComponent<RectTransform>();
+
         originalPosition = transform.localPosition;
     }
 
@@ -22,7 +41,7 @@ public class CameraShake : MonoBehaviour
         while (elapsedTime < shakeDuration)
         {
             Vector3 randomOffset = Random.insideUnitSphere * shakeIntensity;
-            transform.localPosition = originalPosition + randomOffset;
+            rectTransform.localPosition = originalPosition + randomOffset;
             elapsedTime += Time.deltaTime;
 
             yield return null;

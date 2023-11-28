@@ -10,8 +10,6 @@ public class Fruit : MonoBehaviour
     public bool isHeld = false;
     public bool isEnemyTeam = false;
 
-    public CameraShake cameraShake;
-
     MeshRenderer renderer;
     Rigidbody rb;
     // Start is called before the first frame update
@@ -19,7 +17,6 @@ public class Fruit : MonoBehaviour
     {
         renderer = GetComponent<MeshRenderer>();
         rb = GetComponent<Rigidbody>();
-        cameraShake = PlayerController.Instance.GetComponent<CameraShake>();
     }
 
     // Update is called once per frame
@@ -117,7 +114,7 @@ public class Fruit : MonoBehaviour
         if(combatant is PlayerController && doShake)
         {
             float shakeIntensity = ScaleFloat(Mathf.Clamp((float)damage / (float)combatant.MaxHP, 0.01f, 1f));
-            yield return StartCoroutine(cameraShake.DoShake(shakeIntensity));
+            yield return StartCoroutine(CameraShake.Instance.DoShake(shakeIntensity));
         }
         else
         {
