@@ -2,10 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class WaveManager : MonoBehaviour
 {
     public List<Wave> waves;
+    public List<Enemy> enemies;
+    public bool fightingBoss = false;
+    public int multiplier;
+    public int timeCheck = 0;
     float elaspedTime;
     public TimeSpan waveTime = new TimeSpan();
     float maxTime = Calculation.SecondsToFrames(60);
@@ -28,33 +33,52 @@ public class WaveManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        waveTime = TimeSpan.FromMinutes(1);
         InvokeRepeating("SpawnWave", 0, 3f);
     }
 
     void SpawnWave()
     {
         //spawn enemies
-        if(Calculation.Chance(GetSpawnChance(GameManager.Instance.currentWave)) || firstSpawn)
+        if(!fightingBoss)
         {
-            //spawn enemy in a position around a circle
-            Debug.Log("Spawned enemy!");
+            if(Calculation.Chance(GetSpawnChance(GameManager.Instance.currentWave)) || firstSpawn)
+            {
+                //spawn enemy in a position around a circle
+                Debug.Log("Spawned enemy!");
 
-            firstSpawn = false;
+                firstSpawn = false;
 
+                Vector3 position = Calculation.RandomPointOnCircle(new Vector3(0, 0.75f, 0f), 50.0f);
+                int enemyIndex = UnityEngine.Random.Range(0, waves[GameManager.Instance.currentWave].enemies.Count);
+                EnemyID chosenEnemy = waves[GameManager.Instance.currentWave].enemies[enemyIndex];
+                
+                GameObject enemy = Instantiate(GameManager.Instance.enemies[(int)chosenEnemy].prefab, position, Quaternion.identity);
+                Enemy enemyScript = enemy.GetComponent<Enemy>();
+
+                enemyScript.Initialize(chosenEnemy);
+                enemies.Add(enemyScript);
+            }
+            else
+            {
+                //spawn nothing
+            }
+        }
+
+        //if time is up, spawn boss
+        if(waveTime.TotalSeconds <= 0)
+        {
+            //spawn boss
+            fightingBoss = true;
+            Debug.Log("Spawned boss!");
             Vector3 position = Calculation.RandomPointOnCircle(new Vector3(0, 0.75f, 0f), 50.0f);
-            int enemyIndex = UnityEngine.Random.Range(0, waves[GameManager.Instance.currentWave].enemies.Count);
-            EnemyID chosenEnemy = waves[GameManager.Instance.currentWave].enemies[enemyIndex];
-            
-            GameObject enemy = Instantiate(GameManager.Instance.enemies[(int)chosenEnemy].prefab, position, Quaternion.identity);
+            GameObject enemy = Instantiate(GameManager.Instance.enemies[(int)waves[GameManager.Instance.currentWave].boss].prefab, position, Quaternion.identity);
             Enemy enemyScript = enemy.GetComponent<Enemy>();
 
-            enemyScript.Initialize(chosenEnemy);
+            enemyScript.Initialize(waves[GameManager.Instance.currentWave].boss);
+            enemies.Add(enemyScript);
         }
-        else
-        {
-            //spawn nothing
-        }
-        //wait for enemies to die
+
         //update wave
         //spawn next wave
     }
@@ -70,14 +94,35 @@ public class WaveManager : MonoBehaviour
 
         Debug.Log("Total bonus: " + totalBonus);
 
-        return Mathf.RoundToInt(totalBonus * 10);    
+        return Mathf.RoundToInt(totalBonus);    
     }
 
     // Update is called once per frame
     void Update()
     {
+        ElapseTime();
+    }
+
+    void ElapseTime()
+    {
         elaspedTime += Time.deltaTime;
-        waveTime = waveTime.Add(TimeSpan.FromSeconds(Time.deltaTime));
+        waveTime = waveTime.Subtract(TimeSpan.FromSeconds(Time.deltaTime));
+
+        if(enemies.Any())
+        {
+            multiplier = 1;
+        }
+        else
+        {
+            multiplier = 10;
+        }
+
+        //every second add 1 score
+        if(timeCheck != Mathf.RoundToInt(elaspedTime))
+        {
+            timeCheck = Mathf.RoundToInt(elaspedTime);
+            GameManager.Instance.currentScore += multiplier;
+        }
     }
 
     [System.Serializable]

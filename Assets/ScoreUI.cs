@@ -20,7 +20,7 @@ public class ScoreUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        currentScore = GameManager.Instance.currentScore;
+        targetScore = GameManager.Instance.currentScore;
 
        if(currentScore < targetScore)
        {

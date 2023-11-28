@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Enemy : Entity
 {
@@ -31,6 +32,7 @@ public class Enemy : Entity
     {
         if(CurrentHP <= 0)
         {
+            WaveManager.Instance.enemies.Remove(this);
             GameManager.Instance.enemiesKilled++;
             Destroy(gameObject);
         }

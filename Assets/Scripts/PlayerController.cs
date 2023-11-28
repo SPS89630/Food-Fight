@@ -27,5 +27,10 @@ public class PlayerController : Entity
         animator = GetComponent<Animator>();
         mainCamera = Camera.main;
     }
+
+    void Update()
+    {
+        
+    }
 }
 
